@@ -1,0 +1,648 @@
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model admin {
+  id             Int        @id @default(autoincrement()) // id String @id @default(uuid())
+  aguId          String?    @db.Char(36)
+  uname          String     @db.VarChar(255)
+  password       String     @db.VarChar(255)
+  email          String     @db.VarChar(255) @unique
+  its_superadmin Int
+  page_access    String     @db.VarChar(255)
+  first_name     String     @db.VarChar(255)
+  last_name      String     @db.VarChar(255)
+  image          String     @db.VarChar(255)
+  status         Int
+  role           admin_role @default(admin)
+  permission     String     @db.VarChar(10)
+  phone          Int
+  gender         String     @db.VarChar(1)
+  dob            DateTime   @db.Date
+  // cratedAt DateTime @default(now())
+
+  // Relations
+  // user User @relation(fields: [userid], references: [id], onDelete: Cascade)
+}
+
+model agencies {
+  id          Int       @id @default(autoincrement())
+  horseId     Int?
+  agencyName  String    @db.VarChar(255)
+  agencyLotNo String    @db.VarChar(100)
+  agencyLogo  String    @db.VarChar(255)
+  modifiedOn  DateTime? @default(now()) @db.Timestamp(0)
+
+  @@index([horseId], map: "agencyid_fk")
+}
+
+model color {
+  id    Int     @id @default(autoincrement())
+  color String? @db.VarChar(255)
+}
+
+model countries {
+  id           Int     @id @default(autoincrement())
+  cguId        String? @db.Char(36)
+  countryCode  String  @default("") @db.Char(2)
+  countryName  String  @default("") @db.VarChar(45)
+  currencyCode String? @db.Char(3)
+}
+
+model eligibility {
+  id         Int                @id @default(autoincrement())
+  horseId    Int?
+  type       String?            @db.VarChar(255)
+  series     String?            @db.VarChar(255)
+  feeName    String?            @db.VarChar(255)
+  status     eligibility_status @default(notpaid)
+  modifiedOn DateTime?          @default(now()) @db.Timestamp(0)
+
+  @@index([horseId], map: "eligibilityId_fk")
+}
+
+model horse_basics {
+  id              Int                   @id @default(autoincrement())
+  hbguId          String?               @db.Char(36)
+  horseId         Int?
+  overview        String?               @db.Text
+  overviewUpdate  DateTime?             @db.DateTime(0)
+  catalogue       String?               @db.Text
+  catalogueUpdate DateTime?             @db.DateTime(0)
+  terms           String?               @db.Text
+  article         String?               @db.Text
+  articleUpdate   DateTime?             @db.DateTime(0)
+  news            String?               @db.Text
+  newsUpdate      DateTime?             @db.DateTime(0)
+  isActive        horse_basics_isActive @default(dbgenerated("0"))
+  createdAt       DateTime?             @default(now()) @db.Timestamp(0)
+
+  @@index([horseId], map: "basicid_fk")
+}
+
+model horse_media {
+  id        Int              @id @default(autoincrement())
+  hmguId    String?          @db.Char(36)
+  horseId   Int?
+  lotNo     String           @default("0") @db.VarChar(100)
+  name      String?          @db.VarChar(255)
+  path      String?          @db.VarChar(255)
+  caption   String?          @db.VarChar(255)
+  type      horse_media_type
+  createdAt DateTime?        @default(now()) @db.Timestamp(0)
+
+  @@index([horseId], map: "horseMediaHorseId_fk")
+}
+
+model horses {
+  ID                   Int                  @id @default(autoincrement())
+  hguId                String?              @db.Char(36)
+  name                 String?              @db.VarChar(255)
+  freezebrand          String?              @db.VarChar(50)
+  microchip            BigInt?              @db.UnsignedBigInt
+  foalingDate          DateTime?            @db.Date
+  sireName             String?              @db.VarChar(255)
+  sireId               Int?
+  damName              String?              @db.VarChar(255)
+  damId                Int?
+  damSireName          String?              @db.VarChar(255)
+  damSireId            Int?
+  sex                  String?              @db.VarChar(50)
+  color                String?              @db.VarChar(100)
+  height               Decimal?             @db.Decimal(2, 2)
+  weight               Int?
+  family               String?              @db.VarChar(100)
+  countryOfBirth       String?              @db.VarChar(100)
+  curr_country         String?              @db.VarChar(100)
+  gait                 String?              @db.VarChar(10)
+  earningsString       Int?                 @db.UnsignedInt
+  starts               Int?
+  first                Int?
+  second               Int?
+  third                Int?
+  bmr                  String?              @db.VarChar(30)
+  as_a_2_year          String?              @db.VarChar(30)
+  as_a_2_year_overseas String?              @db.VarChar(30)
+  as_a_3_year          String?              @db.VarChar(30)
+  as_a_3_year_overseas String?              @db.VarChar(30)
+  as_a_4_year          String?              @db.VarChar(30)
+  isRetired            horses_isRetired     @default(dbgenerated("0"))
+  isNameMissing        horses_isNameMissing @default(dbgenerated("0"))
+  modifiedOn           DateTime?            @default(now()) @db.Timestamp(0)
+  createdOn            DateTime?            @default(now()) @db.Timestamp(0)
+  metaphone            String?              @db.VarChar(50)
+  nzId                 Int?
+  lots_horse           lots_horse[]
+}
+
+model lh_consignor {
+  id             Int                   @id @default(autoincrement())
+  horseId        Int?
+  consignorName  String?               @db.VarChar(255)
+  consignorEmail String?               @db.VarChar(255)
+  consignorPhone String?               @db.VarChar(50)
+  isActive       lh_consignor_isActive @default(dbgenerated("1"))
+  modifiedOn     DateTime?             @default(now()) @db.Timestamp(0)
+  createdOn      DateTime              @default(now()) @db.Timestamp(0)
+
+  @@index([horseId], map: "consignorid_fk")
+}
+
+model lots_categories {
+  category_id       Int     @id @default(autoincrement())
+  category_name     String  @db.VarChar(255)
+  category_template String? @db.VarChar(255)
+  category_order    Int     @default(1)
+}
+
+model lots_horse {
+  id                        Int                           @id @default(autoincrement())
+  lguId                     String?                       @db.Char(36)
+  lotType                   String                        @default("Direct Sale") @db.VarChar(12)
+  lotNo                     String                        @default("0") @db.VarChar(100)
+  horseId                   Int?
+  defaultLot                lots_horse_defaultLot         @default(pic)
+  auctionId                 Int                           @default(0)
+  membershipsId             Int                           @default(0)
+  placeAdsId                Int                           @default(0)
+  horseName                 String?                       @db.VarChar(255)
+  lotCategory               lots_horse_lotCategory        @default(weanling)
+  forStallionService        lots_horse_forStallionService @default(dbgenerated("0"))
+  featuredImage             String?                       @db.VarChar(255)
+  showAge                   lots_horse_showAge            @default(dbgenerated("1"))
+  bestOfferFlag             lots_horse_bestOfferFlag      @default(dbgenerated("1"))
+  price                     Int?                          @db.UnsignedInt
+  shareValue                Decimal?                      @db.Decimal(3, 1)
+  currency                  lots_horse_currency?
+  gst                       String?                       @db.VarChar(50)
+  status                    lots_horse_status             @default(Unsold)
+  auFee                     Int?                          @db.UnsignedInt
+  nzFee                     Int?                          @db.UnsignedInt
+  stableNo                  String?                       @db.VarChar(50)
+  semen                     String?                       @db.VarChar(50)
+  currentCountry            String?                       @db.VarChar(255)
+  state                     String?                       @db.VarChar(255)
+  locality                  String?                       @db.VarChar(255)
+  lplts                     Int?
+  lts                       Int?
+  m400                      String?                       @db.VarChar(255)
+  m800                      String?                       @db.VarChar(255)
+  familyValue               String?                       @db.VarChar(50)
+  familyValueUp             String?                       @db.VarChar(50)
+  familyValueDown           String?                       @db.VarChar(50)
+  inFoalOf                  String?                       @db.VarChar(255)
+  foalAtFoot                String?                       @db.VarChar(255)
+  lastDayOfService          DateTime?                     @db.DateTime(0)
+  standingAt                String?                       @db.VarChar(255)
+  trialQuarter              String?                       @db.VarChar(255)
+  trialHalf                 String?                       @db.VarChar(255)
+  startersToWinners         String?                       @db.VarChar(255)
+  winner100k                String?                       @db.VarChar(255)
+  winner1m                  String?                       @db.VarChar(255)
+  damSireProgeny100kWinners String?                       @db.VarChar(255)
+  damSire1mWinners          String?                       @db.VarChar(255)
+  pedigreeFive              String?                       @db.Text
+  pedigreeThree             String?                       @db.Text
+  extraUpdate               DateTime?                     @db.DateTime(0)
+  eligibilityDesc           String?                       @db.Text
+  eligibilityUpdate         DateTime?                     @db.DateTime(0)
+  consignorName             String?                       @db.VarChar(255)
+  consignorEmail            String?                       @db.VarChar(255)
+  consignorPhone            String?                       @db.VarChar(25)
+  companyListedFor          String?                       @db.VarChar(255)
+  lotsOrder                 Int?                          @db.UnsignedInt
+  stallionOrder             Int?                          @db.UnsignedInt
+  showSireBmr               lots_horse_showSireBmr        @default(dbgenerated("0"))
+  isPublished               lots_horse_isPublished        @default(dbgenerated("0"))
+  isArchive                 lots_horse_isArchive          @default(dbgenerated("0"))
+  modifiedOn                DateTime?                     @default(now()) @db.Timestamp(0)
+  createdOn                 DateTime?                     @default(now()) @db.Timestamp(0)
+  horses                    horses?                       @relation(fields: [horseId], references: [ID], onDelete: Restrict, map: "lotId_fk")
+
+  @@index([horseId], map: "lotId_fk")
+}
+
+model media_files {
+  fId       Int       @id @default(autoincrement())
+  guId      String?   @db.Char(36)
+  fName     String?   @db.VarChar(255)
+  fType     String?   @db.VarChar(100)
+  fPath     String?   @db.VarChar(50)
+  fSlug     String?   @db.VarChar(255)
+  fMime     String?   @db.VarChar(10)
+  createdAt DateTime? @default(now()) @db.Timestamp(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model members {
+  id             Int                    @id @default(autoincrement())
+  mguId          String?                @db.Char(36)
+  fullName       String?                @db.VarChar(255)
+  email          String                 @unique(map: "email") @db.VarChar(255)
+  primary_number String?                @db.VarChar(50)
+  country_id     Int?
+  address        String?                @db.VarChar(255)
+  postal_code    String?                @db.VarChar(255)
+  driver_licence String?                @db.VarChar(255)
+  image_name     String?                @db.VarChar(255)
+  image_slug     String?                @db.VarChar(255)
+  profile_image  String?                @db.VarChar(255)
+  favorites      String?                @db.VarChar(255)
+  username       String?                @db.VarChar(100)
+  password       String                 @db.VarChar(255)
+  hash           String?                @db.VarChar(255)
+  membershipType members_membershipType @default(seller)
+  isVerified     members_isVerified     @default(dbgenerated("0"))
+  isApproved     members_isApproved     @default(dbgenerated("0"))
+  isAuction      members_isAuction      @default(dbgenerated("0"))
+  status         members_status?        @default(dbgenerated("0"))
+  role           members_role           @default(member)
+  oauth_provider String?                @db.VarChar(255)
+  oauth_uid      String?                @db.VarChar(255)
+  modified       DateTime?              @default(now()) @db.Timestamp(0)
+  createdOn      DateTime               @default(now()) @db.Timestamp(0)
+}
+
+model membership {
+  id         Int                   @id @default(autoincrement())
+  mbguId     String?               @db.Char(36)
+  mbName     String                @db.VarChar(255)
+  mbType     membership_mbType     @default(seller)
+  sellerType membership_sellerType @default(none)
+  mbPrice    Int                   @default(0)
+  mbFeatures String?               @db.Text
+  isPopular  Boolean?              @default(false)
+  mbOrder    Int?
+  isInView   membership_isInView   @default(dbgenerated("0"))
+  isActive   membership_isActive   @default(dbgenerated("0"))
+  modifiedOn DateTime?             @default(now()) @db.Timestamp(0)
+  createdOn  DateTime              @default(now()) @db.Timestamp(0)
+}
+
+model page_contents {
+  content_id        Int                             @id @default(autoincrement())
+  pguId             String?                         @db.Char(36)
+  content_title     String?                         @db.VarChar(255)
+  content_slug      String?                         @db.VarChar(255)
+  content           String?                         @db.Text
+  content_order     Int?                            @default(0)
+  content_type      String?                         @default("text") @db.VarChar(255)
+  content_file      String?                         @db.VarChar(255)
+  content_limit     Int?                            @default(0)
+  content_published page_contents_content_published @default(dbgenerated("0"))
+  modified_on       DateTime?                       @default(now()) @db.Timestamp(0)
+  added_on          DateTime?                       @default(now()) @db.Timestamp(0)
+}
+
+model payments {
+  paymentId         Int                        @id @default(autoincrement())
+  payguId           String?                    @db.Char(36)
+  orderId           String?                    @db.VarChar(255)
+  tokenId           String?                    @db.VarChar(255)
+  userEmail         String?                    @db.VarChar(255)
+  transactionId     String?                    @db.VarChar(255)
+  transactionMsg    payments_transactionMsg    @default(dbgenerated("0"))
+  transactionStatus payments_transactionStatus @default(dbgenerated("0"))
+  paymentAmount     Int                        @default(0)
+  paymentCurrency   payments_paymentCurrency?  @default(USD)
+  paymentMsg        payments_paymentMsg        @default(dbgenerated("0"))
+  paymentStatus     payments_paymentStatus     @default(dbgenerated("0"))
+  paymentType       String?                    @db.VarChar(255)
+  paymentJson       Json?
+  paymentDate       DateTime                   @default(now()) @db.Timestamp(0)
+  isUsed            payments_isUsed            @default(dbgenerated("0"))
+  modifiedOn        DateTime?                  @default(now()) @db.Timestamp(0)
+  createdOn         DateTime                   @default(now()) @db.Timestamp(0)
+}
+
+model place_ads {
+  placeAdsId    Int                   @id @default(autoincrement())
+  horseId       Int?
+  memberId      String?               @db.Char(36)
+  memberEmail   String?               @db.VarChar(255)
+  membershipUid String?               @db.Char(36)
+  orderId       String?               @db.Char(36)
+  publishedOn   DateTime?             @db.Timestamp(0)
+  isPublished   place_ads_isPublished @default(dbgenerated("0"))
+  modifiedOn    DateTime?             @default(now()) @db.Timestamp(0)
+  createdOn     DateTime              @default(now()) @db.Timestamp(0)
+
+  @@index([isPublished], map: "pads_publish_status")
+}
+
+model races {
+  id         Int       @id @default(autoincrement())
+  rguId      String?   @db.Char(36)
+  horseId    Int?
+  track      String?   @db.VarChar(100)
+  placing    String?   @db.VarChar(100)
+  lastHalf   Decimal?  @db.Decimal(5, 1)
+  lastQtr    Decimal?  @db.Decimal(5, 1)
+  prizeMoney Int?
+  race       String?   @db.VarChar(255)
+  trainer    String?   @db.VarChar(255)
+  driver     String?   @db.VarChar(255)
+  age        Int?
+  bmr        String?   @db.VarChar(255)
+  firstWin   Int?      @db.UnsignedInt
+  secondWin  Int?      @db.UnsignedInt
+  thirdWin   Int?      @db.UnsignedInt
+  starts     Int?      @db.UnsignedInt
+  notes      String?   @db.Text
+  modifiedOn DateTime? @default(now()) @db.Timestamp(0)
+
+  @@index([horseId], map: "racesId_fk")
+}
+
+model sales_result {
+  id         Int       @id @default(autoincrement())
+  horseId    Int?
+  sale       String?   @db.VarChar(255)
+  price      Int?
+  saleAve    Int?
+  relation   String?   @db.VarChar(255)
+  notes      String?   @db.VarChar(255)
+  modifiedOn DateTime? @default(now()) @db.Timestamp(0)
+
+  @@index([horseId], map: "salesResultId_fk")
+}
+
+model sex {
+  id  Int     @id @default(autoincrement())
+  sex String? @db.VarChar(255)
+}
+
+model sitesettings {
+  field_name  String @unique(map: "field_name") @db.VarChar(255)
+  field_value String @db.VarChar(255)
+  id          Int    @id @default(autoincrement())
+}
+
+model subscriptions {
+  subscription_id         Int      @id @default(autoincrement())
+  subscription_orderid    String?  @db.VarChar(255)
+  subscription_member     Int
+  subscription_membership Int
+  subscription_amount     String?  @db.VarChar(255)
+  subscription_date       DateTime @db.DateTime(0)
+  subscription_status     Int?     @default(0) @db.TinyInt
+}
+
+model users {
+  id         Int       @id @default(autoincrement())
+  username   String    @unique(map: "username") @db.VarChar(255)
+  email      String    @unique(map: "email") @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+enum membership_mbType {
+  buyer
+  seller
+}
+
+enum membership_sellerType {
+  stallion
+  other
+  none
+}
+
+enum eligibility_status {
+  notpaid
+  paid
+  eligible
+}
+
+enum lh_consignor_isActive {
+  // 0 @map("0")
+  // 1 @map("1")
+  INACTIVE @map("0")
+  ACTIVE @map("1")
+}
+
+enum lots_horse_defaultLot {
+  pic
+  inf
+}
+
+enum payments_transactionMsg {
+  // 0 @map("0")
+  // 1 @map("1")
+  FAILED @map("0")
+  SUCCESS @map("1")
+}
+
+enum horse_media_type {
+  image
+  video
+  audio
+}
+
+enum payments_transactionStatus {
+  // 0 @map("0")
+  // 1 @map("1")
+  PENDING @map("0")
+  COMPLETED @map("1")
+}
+
+enum place_ads_isPublished {
+  // 0 @map("0")
+  // 1 @map("1")
+  UNPUBLISHED @map("0")
+  PUBLISHED @map("1")
+}
+
+enum membership_isInView {
+  // 0 @map("0")
+  // 1 @map("1")
+  HIDDEN @map("0")
+  VISIBLE @map("1")
+}
+
+enum page_contents_content_published {
+  // 0 @map("0")
+  // 1 @map("1")
+  DRAFT @map("0")
+  PUBLISHED @map("1")
+}
+
+enum payments_paymentCurrency {
+  AUD
+  NZD
+  USD
+  EUR
+  GBP
+}
+
+enum lots_horse_lotCategory {
+  weanling
+  yearling
+  readyToRun
+  racehorse
+  broodmare
+  stallionGuide
+}
+
+enum membership_isActive {
+  // 0 @map("0")
+  // 1 @map("1")
+  INACTIVE @map("0")
+  ACTIVE @map("1")
+}
+
+enum payments_paymentMsg {
+  // 0 @map("0")
+  // 1 @map("1")
+  FAILED @map("0")
+  SUCCESS @map("1")
+}
+
+enum admin_role {
+  admin
+  superadmin
+}
+
+enum lots_horse_forStallionService {
+  // 0 @map("0")
+  // 1 @map("1")
+  NO @map("0")
+  YES @map("1")
+}
+
+enum payments_paymentStatus {
+  // 0 @map("0")
+  // 1 @map("1")
+  PENDING @map("0")
+  COMPLETED @map("1")
+}
+
+enum horse_basics_isActive {
+  // 0 @map("0")
+  // 1 @map("1")
+  INACTIVE @map("0")
+  ACTIVE @map("1")
+
+}
+
+enum lots_horse_showAge {
+  // 0 @map("0")
+  // 1 @map("1")
+  HIDE @map("0")
+  SHOW @map("1")
+}
+
+enum lots_horse_bestOfferFlag {
+  // 0 @map("0")
+  // 1 @map("1")
+  DISABLED @map("0")
+  ENABLED @map("1")
+}
+
+enum payments_isUsed {
+  // 0 @map("0")
+  // 1 @map("1")
+  UNUSED @map("0")
+  USED @map("1")
+}
+
+enum members_membershipType {
+  seller
+  buyer
+}
+
+enum lots_horse_currency {
+  AUD
+  NZD
+  USD
+  EUR
+  GBP
+}
+
+enum members_isVerified {
+  // 0 @map("0")
+  // 1 @map("1")
+  UNVERIFIED @map("0")
+  VERIFIED @map("1")
+}
+
+enum members_isApproved {
+  // 0 @map("0")
+  // 1 @map("1")
+  REJECTED @map("0")
+  APPROVED @map("1")
+}
+
+enum lots_horse_status {
+  Unsold
+  Sold
+  Passed_In     @map("Passed In")
+  Withdrawn
+  Leased
+  Make_an_offer @map("Make an offer")
+  Under_offer   @map("Under offer")
+}
+
+enum members_isAuction {
+  // 0 @map("0")
+  // 1 @map("1")
+  NO @map("0")
+  YES @map("1")
+}
+
+enum members_status {
+  // 1 @map("1")
+  // 0 @map("0")
+  // 2 @map("2")
+  INACTIVE @map("0")
+  ACTIVE @map("1")
+  SUSPENDED @map("2")
+}
+
+enum members_role {
+  member
+  seller
+  buyer
+  merchant
+  subadmin
+}
+
+enum horses_isRetired {
+  // 0 @map("0")
+  // 1 @map("1")
+  NO @map("0")
+  YES @map("1")
+}
+
+enum horses_isNameMissing {
+  // 0 @map("0")
+  // 1 @map("1")
+  NO @map("0")
+  YES @map("1")
+}
+
+enum lots_horse_showSireBmr {
+  // 0 @map("0")
+  // 1 @map("1")
+  HIDE @map("0")
+  SHOW @map("1")
+}
+
+enum lots_horse_isPublished {
+  // 0 @map("0")
+  // 1 @map("1")
+  UNPUBLISHED @map("0")
+  PUBLISHED @map("1")
+}
+
+enum lots_horse_isArchive {
+  // 0 @map("0")
+  // 1 @map("1")
+  NO @map("0")
+  YES @map("1")
+}
