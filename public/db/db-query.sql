@@ -18,3 +18,9 @@ INSERT INTO horses (id, name, sex, sire_id, dam_id) VALUES (4, 'Fast Lightning',
 
 SELECT * FROM horses ORDER BY ID ASC LIMIT 250;
 
+CREATE TABLE visitors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+

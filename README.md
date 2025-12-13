@@ -2,34 +2,17 @@
 Api for race horse pedigree
 
 ## Setup codes
-npm install
-mkdir src
-npm init -y
-npm install express
-npm install nodemaon --save-dev
-npx prisma init
-npm install prisma --save-dev
-npm i @prisma/client
-npm install dotenv
-npx prisma generate
-
-npx prisma migrate dev --create-only
-
-## Prisma configuration steps
-Choose how you want to set up your database:
-Connect to existing database:
-1. configure your DATABASE_URL in prisma.config.ts
-2. Run 'npx prisma db pull' to introspect your database
-
-Create new Database:
-Local: npx prisma dev (run postgres locally in your terminal)
-Cloud: npx create-db (creates a free prisma postgres database)
-
-Then, define your models in prisma/schma.prisma and run npx prisma migrate dev to apply your schema.
-
-### migrate/update tables to database
-npx prisma migrate dev --name add_users_table
-npx prisma generate
-
-### youtube tutorial: https://www.youtube.com/watch?v=g09PoiCob4Y&t=1053s
+1. npm install
+2. mkdir src
+3. npm init -y
+4. npm pkg set type="module"
+5. npm install express
+6. npm install nodemaon --save-dev
+7. npm install dotenv
+8. npm install jsonwebtoken bcryptjs
+9. npm install cors
+10. cd src
+11. touch config/db.js
+12. cd ..
+13. touch public/db-query.sql
 
