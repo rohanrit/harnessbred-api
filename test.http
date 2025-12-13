@@ -1,0 +1,15 @@
+### Get All Horses
+GET http://localhost:3000/api/v1/horses
+
+### Get Pedigree of ID 4
+GET http://localhost:3000/api/v1/horses/4/pedigree
+
+### Create a Horse
+POST http://localhost:3000/api/v1/horses
+Content-Type: application/json
+
+{
+    "name": "New Colt",
+    "sex": "Stallion",
+    "sire_id": 1
+}

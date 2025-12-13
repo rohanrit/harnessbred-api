@@ -1,10 +1,15 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
-// Load environment variables from .env
 dotenv.config();
 
-// Create the connection pool
+const requiredEnv = ['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'];
+requiredEnv.forEach(name => {
+    if (!process.env[name]) {
+        throw new Error(`Environment variable ${name} is missing!`);
+    }
+});
+
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -13,19 +18,9 @@ const pool = mysql.createPool({
     port: process.env.DB_PORT || 3306,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    maxIdle: 10, 
+    idleTimeout: 60000, 
+    enableKeepAlive: true
 });
-
-/**
- * Utility function to close the database pool
- */
-export const disconnectDB = async () => {
-    try {
-        await pool.end();
-        console.log('Database pool closed.');
-    } catch (err) {
-        console.error('Error closing database pool:', err);
-    }
-};
 
 export default pool;
