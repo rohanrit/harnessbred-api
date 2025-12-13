@@ -2,7 +2,7 @@ import pool from '../config/db.js';
 
 export const getAllHorses = async (req, res, next) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM horses');
+        const [rows] = await pool.query('SELECT * FROM horses ORDER BY ID ASC LiMIT 100');
         res.json(rows);
     } catch (err) {
         next(err); // Passes error to the global handler
