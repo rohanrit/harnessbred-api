@@ -1,3 +1,0 @@
-SELECT * FROM horses ORDER BY ID ASC LIMIT 250;
-#// CREATE DATABASE horsesdb;
-

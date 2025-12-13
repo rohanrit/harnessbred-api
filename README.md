@@ -13,6 +13,8 @@ npm i @prisma/client
 npm install dotenv
 npx prisma generate
 
+npx prisma migrate dev --create-only
+
 ## Prisma configuration steps
 Choose how you want to set up your database:
 Connect to existing database:
