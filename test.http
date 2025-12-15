@@ -1,11 +1,11 @@
 ### Get All Horses
-GET http://localhost:3000/api/v1/horses
+GET http://localhost:8001/api/v1/horses
 
 ### Get Pedigree of ID 4
-GET http://localhost:3000/api/v1/horses/4/pedigree
+GET http://localhost:8001/api/v1/horses/4/pedigree
 
 ### Create a Horse
-POST http://localhost:3000/api/v1/horses
+POST http://localhost:8001/api/v1/horses
 Content-Type: application/json
 
 {
@@ -15,4 +15,4 @@ Content-Type: application/json
 }
 
 ### Get All Members
-GET http://localhost:3000/api/v1/members
+GET http://localhost:8001/api/v1/members

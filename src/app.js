@@ -23,6 +23,10 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
+app.get('/', (req, res) => {
+    res.json({ message: "You are connected to the api" });
+});
+
 app.use('/api/v1', apiRoutes);
 
 app.use((req, res) => {
