@@ -1,5 +1,27 @@
+### Create a login Token
+POST http://localhost:8001/login
+Content-Type: application/json
+
+{
+    "username": "john",
+    "role": "admin",
+    "domain": ""
+}
+
 ### Get All Horses
 GET http://localhost:8001/api/v1/horses
+Content-Type: application/json,
+
+### Get All Horses with token
+GET http://localhost:8001/api/v1/horses/search?page=1&limit=50
+Content-Type: application/json
+Authorization: Bearer token
+
+
+### Get All Horses with token
+GET http://localhost:8001/api/v1/horses?page=1&limit=50
+Content-Type: application/json
+Authorization: Bearer token
 
 ### Get Pedigree of ID 4
 GET http://localhost:8001/api/v1/horses/4/pedigree
@@ -16,3 +38,10 @@ Content-Type: application/json
 
 ### Get All Members
 GET http://localhost:8001/api/v1/members
+
+
+
+### Get user
+GET http://localhost:8001/users
+Content-Type: application/json,
+Authorization: Bearer token
