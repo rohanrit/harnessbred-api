@@ -1,10 +1,6 @@
 import express from 'express';
-<<<<<<< HEAD
-=======
-import cors from 'cors';
-import dotenv from 'dotenv';
->>>>>>> 01c6bc694fc0a552dd09a4e4ae0fdf11445e7f87
 import apiRoutes from './routes/index.js';
+import cors from 'cors';
 import { errorHandler } from './middleware/error.handler.js';
 
 const app = express();
