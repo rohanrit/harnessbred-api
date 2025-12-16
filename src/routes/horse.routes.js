@@ -1,11 +1,16 @@
 import { Router } from 'express';
-import { getAllHorses, getSearchHorses, getPedigree } from '../controllers/horse.controller.js';
+import {getAllHorses, getPedigree} from '../controllers/horse.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 
 const router = Router();
 
 router.get('/', getAllHorses);
-router.get('/search', getSearchHorses);
-router.get('/:id/pedigree', getPedigree);
+
+router.get('/:id/pedigree', protect, getPedigree);
+
+// If you want to protect ALL routes in this file:
+// router.use(protect); // Apply to everything below
+// router.get('/', getAllHorses);
+// router.get('/search', getSearchHorses);
 
 export default router;

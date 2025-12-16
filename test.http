@@ -11,11 +11,10 @@ Content-Type: application/json
 ### Get All Horses
 GET http://localhost:8001/api/v1/horses
 Content-Type: application/json,
+Authorization: Bearer token
 
 ### Get All Horses with token
-GET http://localhost:8001/api/v1/horses/search?page=1&limit=50
-Content-Type: application/json
-Authorization: Bearer token
+GET http://localhost:8001/api/v1/horsesearh?page=1&limit=50
 
 
 ### Get All Horses with token
