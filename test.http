@@ -8,14 +8,20 @@ Content-Type: application/json
     "domain": ""
 }
 
-### Get All Horses
+### Get All Horses with token
 GET http://localhost:8001/api/v1/horses
 Content-Type: application/json,
 Authorization: Bearer token
 
 ### Get All Horses with token
-GET http://localhost:8001/api/v1/horsesearh?page=1&limit=50
+GET http://localhost:8001/api/v1/horsesearch?page=1&limit=50
 
+### Get Real Horses
+GET http://localhost:8001/api/v1/horses/real?horseid=&gen=6
+
+
+### Get Real Horses
+GET http://localhost:8001/api/v1/horses/hypo?sireid=497875&damid=376952&gen=4
 
 ### Get All Horses with token
 GET http://localhost:8001/api/v1/horses?page=1&limit=50

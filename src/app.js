@@ -81,8 +81,8 @@ app.post('/login', (req, res) => {
   });
 });
 
-app.use('/api/v1/horsesearh', horseSearchRoutes);
-app.use('/api/v1/horses', authenticateToken, horseRoutes);
+app.use('/api/v1/horsesearch', horseSearchRoutes);
+app.use('/api/v1/horses', horseRoutes);
 app.use('/api/v1/members', authenticateToken, memberRoutes);
 
 app.use((req, res) => {
