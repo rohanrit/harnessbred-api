@@ -66,7 +66,7 @@ export const getSearchHorses = async (req, res, next) => {
                 SELECT id, name, foalingDate 
                 FROM horses 
                 WHERE name LIKE ? 
-                ORDER BY foalingDate ASC 
+                ORDER BY foalingDate DESC 
                 LIMIT ? OFFSET ?`;
       countSql = `SELECT COUNT(*) as total FROM horses WHERE name LIKE ?`;
       params = [searchPattern, limit, offset];
@@ -74,7 +74,7 @@ export const getSearchHorses = async (req, res, next) => {
       dataSql = `
                 SELECT id, name, foalingDate 
                 FROM horses 
-                ORDER BY foalingDate ASC 
+                ORDER BY foalingDate DESC
                 LIMIT ? OFFSET ?`;
       countSql = `SELECT COUNT(*) as total FROM horses`;
       params = [limit, offset];
