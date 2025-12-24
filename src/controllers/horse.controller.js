@@ -107,6 +107,110 @@ export const getRealHorses = async (req, res, next) => {
     }
 
     const maxGen = Math.min(parseInt(gen), 5);
+    const pedigreeLevels = Array.from({ length: maxGen + 1 }, () => []);
+
+    async function buildPedigree(horseId, level, childId = null, relationType = null) {
+      if (!horseId || level > maxGen) return;
+
+      const [rows] = await pool.query(
+        `SELECT id, name, foalingDate, sex, sireId, damId 
+         FROM horses WHERE id = ?`,
+        [horseId]
+      );
+
+      if (rows.length === 0) return;
+      const horse = rows[0];
+
+      pedigreeLevels[level].push({
+        id: horse.id,
+        name: horse.name,
+        dob: horse.foalingDate,
+        sex: horse.sex,
+        generation: level,
+        childId,
+        relationType,
+      });
+
+      await buildPedigree(horse.sireId, level + 1, horse.id, "sire");
+      await buildPedigree(horse.damId, level + 1, horse.id, "dam");
+    }
+
+    await buildPedigree(parseInt(horseid), 0);
+
+    res.json({
+      horseId: horseid,
+      generation: maxGen,
+      pedigree: pedigreeLevels,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+export const getHypoHorses = async (req, res, next) => {
+  try {
+    const { sireid, damid, gen } = req.query;
+
+    if (!sireid || !damid || !gen) {
+      return res.status(400).json({ error: "Missing sire, dam or generation query parameter" });
+    }
+
+    const maxGen = Math.min(parseInt(gen), 5);
+    const pedigreeLevels = Array.from({ length: maxGen + 1 }, () => []);
+
+    async function buildAncestor(horseId, level, childId = null, relationType = null) {
+      if (!horseId || level > maxGen) return;
+
+      const [rows] = await pool.query(
+        `SELECT id, name, foalingDate, sex, sireId, damId
+         FROM horses WHERE id = ?`,
+        [horseId]
+      );
+
+      if (rows.length === 0) return;
+      const horse = rows[0];
+
+      pedigreeLevels[level].push({
+        id: horse.id,
+        name: horse.name,
+        dob: horse.foalingDate,
+        sex: horse.sex,
+        generation: level,
+        childId,
+        relationType,
+      });
+
+      await buildAncestor(horse.sireId, level + 1, horse.id, "sire");
+      await buildAncestor(horse.damId, level + 1, horse.id, "dam");
+    }
+
+    await buildAncestor(parseInt(sireid), 0, null, "sire");
+    await buildAncestor(parseInt(damid), 0, null, "dam");
+
+    res.json({
+      sireId: sireid,
+      damId: damid,
+      generation: maxGen,
+      pedigree: pedigreeLevels,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+
+export const getRealHorsesNested = async (req, res, next) => {
+  try {
+    const { horseid, gen } = req.query;
+
+    if (!horseid || !gen) {
+      return res.status(400).json({ error: "Missing horse or generation query parameter" });
+    }
+
+    const maxGen = Math.min(parseInt(gen), 5);
 
     async function buildPedigree(horseId, level) {
       if (!horseId || level > maxGen) return null;
@@ -142,7 +246,7 @@ export const getRealHorses = async (req, res, next) => {
   }
 };
 
-export const getHypoHorses = async (req, res, next) => {
+export const getHypoHorsesNested = async (req, res, next) => {
   try {
     const { sireid, damid, gen } = req.query;
 

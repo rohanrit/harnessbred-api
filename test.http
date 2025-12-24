@@ -19,7 +19,7 @@ Authorization: Bearer token
 GET http://localhost:8001/api/v1/horsesearch?page=1&limit=50
 
 ### Get Real Horses
-GET http://localhost:8001/api/v1/horses/real?horseid=&gen=6
+GET http://localhost:8001/api/v1/horses/real?horseid=528492&gen=3
 
 ### Get Real Horses
 GET http://localhost:8001/api/v1/horses/real?horseid=&gen=6
