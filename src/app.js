@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { errorHandler } from './middleware/error.handler.js';
 import horseSearchRoutes from './routes/horseSearchRoutes.routes.js';
 import horseRoutes from './routes/horse.routes.js';
+import plansRoutes from './routes/plans.routes.js';
 import memberRoutes from './routes/member.routes.js';
 
 const app = express();
@@ -83,6 +84,7 @@ app.post('/login', (req, res) => {
 
 app.use('/api/v1/horsesearch', horseSearchRoutes);
 app.use('/api/v1/horses', horseRoutes);
+app.use('/api/v1/plans', plansRoutes);
 app.use('/api/v1/members', authenticateToken, memberRoutes);
 
 app.use((req, res) => {
