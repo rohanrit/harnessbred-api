@@ -98,26 +98,72 @@ export const getSearchHorses = async (req, res, next) => {
   }
 };
 
+const applyDuplicateGrading = (pedigreeLevels) => {
+  const colorArray = [
+    "#898CFF",
+    "#FF89B5",
+    "#FFDC89",
+    "#90D4F7",
+    "#898CFF",
+    "#F5A26F",
+    "#ED6D79",
+    "#5AD0E5",
+    "#DA97E0",
+    "#CFF381",
+    "#FF96E3",
+    "#BB96FF",
+    "#67EEBD",
+    "#9ACD32",
+    "#DCDCDC",
+    "#F0E68C",
+    "#ADD8E6",
+    "#FFF8DC",
+    "#FFB6C1",
+    "#DEB887",
+  ];
+
+  const counts = new Map();
+  const flatPedigree = pedigreeLevels.flat();
+
+  flatPedigree.forEach((horse) => {
+    if (horse.id) {
+      counts.set(horse.id, (counts.get(horse.id) || 0) + 1);
+    }
+  });
+
+  const duplicateColorMap = new Map();
+  let colorIndex = 0;
+
+  pedigreeLevels.forEach((level) => {
+    level.forEach((horse) => {
+      if (counts.get(horse.id) > 1) {
+        if (!duplicateColorMap.has(horse.id)) {
+          duplicateColorMap.set(horse.id, colorArray[colorIndex % colorArray.length]);
+          colorIndex++;
+        }
+
+        horse.color = duplicateColorMap.get(horse.id);
+        horse.isDuplicate = true;
+      } else {
+        horse.color = null;
+        horse.isDuplicate = false;
+      }
+    });
+  });
+
+  return pedigreeLevels;
+};
+
 export const getRealHorses = async (req, res, next) => {
   try {
     const { horseid, gen } = req.query;
-
-    if (!horseid || !gen) {
-      return res.status(400).json({ error: "Missing horse or generation query parameter" });
-    }
 
     const maxGen = Math.min(parseInt(gen), 5);
     const pedigreeLevels = Array.from({ length: maxGen + 1 }, () => []);
 
     async function buildPedigree(horseId, level, childId = null, relationType = null) {
       if (!horseId || level > maxGen) return;
-
-      const [rows] = await pool.query(
-        `SELECT id, name, foalingDate, sex, sireId, damId 
-         FROM horses WHERE id = ?`,
-        [horseId]
-      );
-
+      const [rows] = await pool.query(`SELECT id, name, foalingDate, sex, sireId, damId FROM horses WHERE id = ?`, [horseId]);
       if (rows.length === 0) return;
       const horse = rows[0];
 
@@ -137,16 +183,17 @@ export const getRealHorses = async (req, res, next) => {
 
     await buildPedigree(parseInt(horseid), 0);
 
+    const finalPedigree = applyDuplicateGrading(pedigreeLevels);
+
     res.json({
       horseId: horseid,
       generation: maxGen,
-      pedigree: pedigreeLevels,
+      pedigree: finalPedigree,
     });
   } catch (err) {
     next(err);
   }
 };
-
 
 export const getHypoHorses = async (req, res, next) => {
   try {
@@ -161,13 +208,7 @@ export const getHypoHorses = async (req, res, next) => {
 
     async function buildAncestor(horseId, level, childId = null, relationType = null) {
       if (!horseId || level > maxGen) return;
-
-      const [rows] = await pool.query(
-        `SELECT id, name, foalingDate, sex, sireId, damId
-         FROM horses WHERE id = ?`,
-        [horseId]
-      );
-
+      const [rows] = await pool.query(`SELECT id, name, foalingDate, sex, sireId, damId FROM horses WHERE id = ?`, [horseId]);
       if (rows.length === 0) return;
       const horse = rows[0];
 
@@ -188,19 +229,18 @@ export const getHypoHorses = async (req, res, next) => {
     await buildAncestor(parseInt(sireid), 0, null, "sire");
     await buildAncestor(parseInt(damid), 0, null, "dam");
 
+    const finalPedigree = applyDuplicateGrading(pedigreeLevels);
+
     res.json({
       sireId: sireid,
       damId: damid,
       generation: maxGen,
-      pedigree: pedigreeLevels,
+      pedigree: finalPedigree,
     });
   } catch (err) {
     next(err);
   }
 };
-
-
-
 
 export const getRealHorsesNested = async (req, res, next) => {
   try {
