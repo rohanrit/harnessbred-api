@@ -35,3 +35,13 @@ export const protect = async (req, res, next) => {
     return res.status(401).json({ message: 'Not authorized: Token failed' });
   }
 };
+
+export const authorize = (...roles) => {
+  return (req, res, next) => {
+    // This assumes you fetch the user's role from the DB in the protect middleware
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ error: "User role not authorized to perform this action" });
+    }
+    next();
+  };
+};

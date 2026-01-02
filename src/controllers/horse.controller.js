@@ -352,3 +352,73 @@ export const getPedigree = async (req, res, next) => {
     next(err);
   }
 };
+
+export const addHorse = async (req, res, next) => {
+  try {
+    const { name, foalingDate, sex, sireId, damId, sireName, damName, damSireName } = req.body;
+
+    const sql = `
+      INSERT INTO horses (name, foalingDate, sex, sireId, damId, sireName, damName, damSireName)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const [result] = await pool.query(sql, [name, foalingDate, sex, sireId || null, damId || null, sireName || null, damName || null, damSireName || null]);
+
+    res.status(201).json({
+      success: true,
+      message: "Horse added successfully",
+      horseId: result.insertId,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateHorse = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { name, foalingDate, sex, sireId, damId, sireName, damName, damSireName } = req.body;
+
+    const sql = `
+      UPDATE horses 
+      SET name = ?, foalingDate = ?, sex = ?, sireId = ?, damId = ?, 
+          sireName = ?, damName = ?, damSireName = ?
+      WHERE id = ?
+    `;
+
+    const [result] = await pool.query(sql, [name, foalingDate, sex, sireId || null, damId || null, sireName || null, damName || null, damSireName || null, id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Horse not found" });
+    }
+
+    res.json({ success: true, message: "Horse updated successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteHorse = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Optional: Check if the horse is a parent of others before deleting
+    const [children] = await pool.query("SELECT id FROM horses WHERE sireId = ? OR damId = ? LIMIT 1", [id, id]);
+
+    if (children.length > 0) {
+      return res.status(400).json({
+        message: "Cannot delete this horse because it is linked as a parent to other records.",
+      });
+    }
+
+    const [result] = await pool.query("DELETE FROM horses WHERE id = ?", [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Horse not found" });
+    }
+
+    res.json({ success: true, message: "Horse deleted successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
