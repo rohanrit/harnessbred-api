@@ -14,7 +14,7 @@ Content-Type: application/json
 {
   "username": "admin",
   "email": "admin@xmate.com.au",
-  "password": "Hellodemo@123"
+  "password": "123456"
 }
 
 ### Login Up
@@ -92,9 +92,12 @@ Content-Type: application/json
 ### Get All Members
 GET http://localhost:8001/api/v1/members
 
-
-
 ### Get user
 GET http://localhost:8001/users
 Content-Type: application/json,
 Authorization: Bearer token
+
+### Get My Profile
+GET http://localhost:8001/api/v1/horse/pedigree/497875
+Content-Type: application/json,
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzY3Mzg4MDM5LCJleHAiOjE3Njc5OTI4Mzl9.LyObQ4fKIGk5QWZkJ8zrC0gB6AL1Vp21DEoMEFqgPu8
