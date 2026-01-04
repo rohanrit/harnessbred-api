@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Horse API Index</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 20px; }
+      h1 { color: #2c3e50; }
+      h2 { margin-top: 30px; color: #34495e; }
+      pre { background: #f4f4f4; padding: 10px; border-radius: 5px; }
+      code { color: #c0392b; }
+    </style>
+  </head>
+  <body>
+    <h1>🐎 Horse API Index</h1>
+    <p>Welcome! Below are the available endpoints, methods, and example requests.</p>
+
+    <h2>🔑 Authentication</h2>
+    <pre>
+      POST /api/v1/auth/signup
+      {
+        "username": "&lt;johndoe&gt;",
+        "email": "&lt;johndoe@sample.com&gt;",
+        "password": "&lt;yourpassword&gt;"
+      }
+
+      POST /api/v1/auth/login
+      {
+        "loginKey": "&lt;johndoe@sample.com&gt;",
+        "password": "&lt;yourpassword&gt;"
+      }
+
+      POST /api/v1/auth/forgot-password
+      {
+        "email": "&lt;johndoe@sample.com&gt;",
+      }
+
+      GET /api/v1/auth/userprofile
+      Authorization: Bearer &lt;token&gt;
+    </pre>
+
+    <h2>👥 Members</h2>
+    <pre>
+      GET /api/v1/members
+      Authorization: Bearer &lt;token&gt;
+    </pre>
+
+    <h2>🐴 Horses</h2>
+    <pre>
+      GET /api/v1/horses?page=1&limit=50
+      Authorization: Bearer &lt;token&gt;
+
+      GET /api/v1/horses/real?horseid=&lt;horseid&gt;&gen=&lt;generation&gt;
+      GET /api/v1/horses/hypo?sireid=&lt;sireid&gt;&damid=&lt;damid&gt;&gen=&lt;generation&gt;
+
+      GET /api/v1/horses/4/pedigree
+    </pre>
+
+    <h2>📊 Plans</h2>
+    <pre>
+      GET /api/v1/plans
+    </pre>
+
+    <h2>ℹ️ Notes</h2>
+    <ul>
+      <li>All protected routes require <code>Authorization: Bearer &lt;token&gt;</code>.</li>
+      <li>Use <code>Content-Type: application/json</code> for POST requests.</li>
+      <li>Pagination supported via <code>?page=&lt;pagenumber&gt;&limit=&lt;limit&gt;</code> query params.</li>
+    </ul>
+  </body>
+</html>

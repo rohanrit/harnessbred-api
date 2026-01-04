@@ -7,6 +7,7 @@ import plansRoutes from './routes/plans.routes.js';
 import memberRoutes from './routes/member.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import { protect } from './middleware/auth.middleware.js';
+import path from 'path';
 
 const app = express();
 
@@ -31,10 +32,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-  res.json({ message: 'API is running successfully', timestamp: new Date().toISOString() });
-});
+// app.get('/', (req, res) => {
+//   res.json({ message: 'API is running successfully', timestamp: new Date().toISOString() });
+// });
+app.get('/', (req, res) => { res.sendFile(path.join(process.cwd(), 'public', 'index.html')); });
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/horsesearch', horseSearchRoutes);
